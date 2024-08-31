@@ -71,6 +71,29 @@ router.post("/register", (req, res) => {
   );
 });
 
+router.delete("/deleteusers", (req, res) => {
+  const query = "DELETE FROM users WHERE id != ?";
+  const userId = 1;
+
+  db.all(query, [userId], function (err) {
+    if (!!err) {
+      return res.status(500).send({ error: err.message });
+    }
+    res.send("All users were removed!");
+  });
+});
+
+router.delete("/deletefavourites", (req, res) => {
+  const query = "DELETE FROM favourites";
+
+  db.all(query, function (err) {
+    if (!!err) {
+      return res.status(500).send({ error: err.message });
+    }
+    res.send("Favourites table is flushed!");
+  });
+});
+
 // Protected route to get user data
 router.get("/getuser", auth, (req, res) => {
   db.get("SELECT * FROM users WHERE id = ?", [req.user.id], (err, user) => {
