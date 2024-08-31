@@ -14,11 +14,14 @@ const favouritesRoutes = require("./favourites");
 
 app.use(cors());
 app.use(express.json());
+
+/*
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+*/
 
 // Simple route to check server
 app.get("/", (req, res) => {
