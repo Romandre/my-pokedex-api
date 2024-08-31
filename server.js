@@ -11,7 +11,7 @@ const cors = require("cors");
 const authRoutes = require("./auth");
 const favouritesRoutes = require("./favourites");
 
-app.use(cors({ origin: "https://personalpokedex.netlify.app/" }));
+app.use(cors());
 app.use(express.json());
 
 // Simple route to check server
