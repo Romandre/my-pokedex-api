@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const app = express();
 
 require("dotenv").config({
@@ -12,16 +11,8 @@ const cors = require("cors");
 const authRoutes = require("./auth");
 const favouritesRoutes = require("./favourites");
 
-app.use(cors());
+app.use(cors({ origin: "https://personalpokedex.netlify.app/" }));
 app.use(express.json());
-
-/*
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-*/
 
 // Simple route to check server
 app.get("/", (req, res) => {
@@ -31,6 +22,10 @@ app.get("/", (req, res) => {
 // API endpoints
 app.use("/api/auth", authRoutes);
 app.use("/api/", favouritesRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Not Found" });
+});
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
