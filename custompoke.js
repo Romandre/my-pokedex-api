@@ -36,7 +36,7 @@ router.post("/add", (req, res) => {
 router.post("/remove", (req, res) => {
   const { userId, name } = req.body;
   const query = "DELETE FROM custompoke WHERE userId = ? AND name = ?";
-  const query2 = "DELETE FROM favourites WHERE userId = ? AND name = ?";
+  const query2 = "DELETE FROM favourites WHERE userId = ? AND pokemon = ?";
 
   db.all(query, [userId, name], function (err) {
     if (err) {
@@ -46,7 +46,7 @@ router.post("/remove", (req, res) => {
       if (err) {
         return res.status(500).send(`Custom pokemon "${name}" not found`);
       }
-      res.send(`Custom pokemon "${name}" is removed`);
+      return res.send(`Custom pokemon "${name}" is removed`);
     });
   });
 });
