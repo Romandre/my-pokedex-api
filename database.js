@@ -6,21 +6,10 @@ const SALT_ROUNDS = 10;
 const dbPath = "./pokedex.db";
 let db;
 
-// Admin user (for dem0)
+// Admin user (for demo)
 const demoUser = {
   name: "admin",
   pass: "admin123",
-};
-
-const demoPokemon = {
-  userId: 1,
-  name: "Pika-hua-hua",
-  weight: 30,
-  abilities: [
-    { ability: { name: "Bark all day" } },
-    { ability: { name: "Shit every where" } },
-  ],
-  private: 0,
 };
 
 function OpenDB() {
@@ -103,31 +92,9 @@ function CreateCustomPokeTable() {
   });
 }
 
-function CreateDemoCustomPokemon() {
-  db.all("SELECT * FROM custompoke WHERE userId = 1", async (err, user) => {
-    if (err) {
-      console.error(err);
-    }
-    if (!user.length) {
-      db.all(
-        "INSERT INTO custompoke (userId, name, weight, mainAbility, secondAbility, private) VALUES (?,?,?,?,?,?)",
-        [
-          demoPokemon.userId,
-          demoPokemon.name,
-          demoPokemon.weight,
-          demoPokemon.mainAbility,
-          demoPokemon.secondAbility,
-          demoPokemon.private,
-        ]
-      );
-      console.log("Custom Pokemon created!");
-    }
-  });
-}
-
 OpenDB();
 CreateUsersTable().then(() => CreateAdminUser());
 CreateFavouritesTable();
-CreateCustomPokeTable().then(() => CreateDemoCustomPokemon());
+CreateCustomPokeTable();
 
 module.exports = db;

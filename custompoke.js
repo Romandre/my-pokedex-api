@@ -36,12 +36,31 @@ router.post("/add", (req, res) => {
 router.post("/remove", (req, res) => {
   const { userId, name } = req.body;
   const query = "DELETE FROM custompoke WHERE userId = ? AND name = ?";
+  const query2 = "DELETE FROM favourites WHERE userId = ? AND name = ?";
 
   db.all(query, [userId, name], function (err) {
     if (err) {
       return res.status(500).send(`Custom pokemon "${name}" not found`);
     }
-    res.send(`Custom pokemon "${name}" is removed`);
+    db.all(query2, [userId, name], function (err) {
+      if (err) {
+        return res.status(500).send(`Custom pokemon "${name}" not found`);
+      }
+      res.send(`Custom pokemon "${name}" is removed`);
+    });
+  });
+});
+
+// Route to remove all user custom pokemons from custompoke
+router.post("/removeall", (req, res) => {
+  const { userId } = req.body;
+  const query = "DELETE FROM custompoke WHERE userId = ?";
+
+  db.all(query, [userId], function (err) {
+    if (err) {
+      return res.status(500).send(`User not found`);
+    }
+    res.send(`All your custom pokemons are flushed!`);
   });
 });
 

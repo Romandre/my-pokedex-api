@@ -45,14 +45,15 @@ router.post("/remove", (req, res) => {
   });
 });
 
-router.delete("/removeall", (req, res) => {
-  const query = "DELETE FROM favourites";
+router.post("/removeall", (req, res) => {
+  const { userId } = req.body;
+  const query = "DELETE FROM favourites WHERE userId = ?";
 
-  db.all(query, function (err) {
+  db.all(query, [userId], function (err) {
     if (!!err) {
       return res.status(500).send({ error: err.message });
     }
-    res.send("Favourites table is flushed!");
+    res.send("Your favourites are flushed!");
   });
 });
 
