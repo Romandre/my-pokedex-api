@@ -71,6 +71,7 @@ router.post("/register", (req, res) => {
   );
 });
 
+// Flush users table (except of admin)
 router.delete("/deleteusers", (req, res) => {
   const query = "DELETE FROM users WHERE id != ?";
   const userId = 1;
@@ -80,17 +81,6 @@ router.delete("/deleteusers", (req, res) => {
       return res.status(500).send({ error: err.message });
     }
     res.send("All users were removed!");
-  });
-});
-
-router.delete("/deletefavourites", (req, res) => {
-  const query = "DELETE FROM favourites";
-
-  db.all(query, function (err) {
-    if (!!err) {
-      return res.status(500).send({ error: err.message });
-    }
-    res.send("Favourites table is flushed!");
   });
 });
 

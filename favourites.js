@@ -2,12 +2,8 @@ const express = require("express");
 const router = express.Router();
 const db = require("./database");
 
-require("dotenv").config({
-  path: "./.env",
-});
-
 // Route to add pokemon to favourites
-router.post("/addfavourites", (req, res) => {
+router.post("/add", (req, res) => {
   const { userId, pokemon } = req.body;
   const query = "SELECT * FROM favourites WHERE userId = ? AND pokemon = ?";
 
@@ -34,7 +30,7 @@ router.post("/addfavourites", (req, res) => {
 });
 
 // Route to remove pokemon from favourites
-router.post("/removefavourites", (req, res) => {
+router.post("/remove", (req, res) => {
   const { userId, pokemon } = req.body;
   const query = "DELETE FROM favourites WHERE userId = ? AND pokemon = ?";
 
@@ -49,8 +45,19 @@ router.post("/removefavourites", (req, res) => {
   });
 });
 
+router.delete("/removeall", (req, res) => {
+  const query = "DELETE FROM favourites";
+
+  db.all(query, function (err) {
+    if (!!err) {
+      return res.status(500).send({ error: err.message });
+    }
+    res.send("Favourites table is flushed!");
+  });
+});
+
 // Route to get favourite pokemons from db
-router.get("/getfavourites/:userId", (req, res) => {
+router.get("/get/:userId", (req, res) => {
   const userId = req.params.userId;
   const query = "SELECT * FROM favourites WHERE userId = ?";
 

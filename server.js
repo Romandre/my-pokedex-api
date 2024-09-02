@@ -10,6 +10,7 @@ const db = require("./database");
 const cors = require("cors");
 const authRoutes = require("./auth");
 const favouritesRoutes = require("./favourites");
+const customPokeRoutes = require("./custompoke");
 
 app.use(cors());
 app.use(express.json());
@@ -21,7 +22,8 @@ app.get("/", (req, res) => {
 
 // API endpoints
 app.use("/api/auth", authRoutes);
-app.use("/api/", favouritesRoutes);
+app.use("/api/favourites", favouritesRoutes);
+app.use("/api/custompokemon", customPokeRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found" });

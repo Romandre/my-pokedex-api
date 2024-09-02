@@ -5,21 +5,31 @@ const SALT_ROUNDS = 10;
 // Prepare DB with "users" table
 const dbPath = "./pokedex.db";
 let db;
+
+// Admin user (for dem0)
 const demoUser = {
   name: "admin",
   pass: "admin123",
 };
+
+const demoPokemon = {
+  userId: 1,
+  name: "Pika-hua-hua",
+  weight: 30,
+  abilities: [
+    { ability: { name: "Bark all day" } },
+    { ability: { name: "Shit every where" } },
+  ],
+  private: 0,
+};
+
 function OpenDB() {
-  return new Promise(function (resolve, reject) {
-    db = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE, (err) => {
-      if (err) {
-        console.error(err.message);
-        return reject(err);
-      } else {
-        console.log("Database connection is successful!");
-        return resolve();
-      }
-    });
+  db = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log("Database connection is successful!");
+    }
   });
 }
 
@@ -30,7 +40,14 @@ function CreateUsersTable() {
         username TEXT UNIQUE, 
         password TEXT)`;
 
-    db.run(createUsersSql, (err) => (err ? reject(err) : resolve()));
+    db.run(createUsersSql, (err) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
   });
 }
 
@@ -50,21 +67,67 @@ function CreateAdminUser() {
 }
 
 function CreateFavouritesTable() {
-  return new Promise(function (resolve, reject) {
-    const createUsersSql = `CREATE TABLE IF NOT EXISTS favourites (
+  const createUsersSql = `CREATE TABLE IF NOT EXISTS favourites (
         id INTEGER PRIMARY KEY, 
         userId INTEGER, 
         pokemon TEXT,
         FOREIGN KEY(userId) REFERENCES users(id))`;
 
-    db.run(createUsersSql, (err) => (err ? reject(err) : resolve()));
+  db.run(createUsersSql, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
   });
 }
 
-OpenDB()
-  .then(() => CreateUsersTable())
-  .then(() => CreateAdminUser());
+function CreateCustomPokeTable() {
+  return new Promise(function (resolve, reject) {
+    const createUsersSql = `CREATE TABLE IF NOT EXISTS custompoke (
+        id INTEGER PRIMARY KEY, 
+        userId INTEGER, 
+        name TEXT,
+        weight INTEGER,
+        mainAbility TEXT,
+        secondAbility TEXT,
+        private INTEGER,
+        FOREIGN KEY(userId) REFERENCES users(id))`;
 
+    db.run(createUsersSql, (err) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+function CreateDemoCustomPokemon() {
+  db.all("SELECT * FROM custompoke WHERE userId = 1", async (err, user) => {
+    if (err) {
+      console.error(err);
+    }
+    if (!user.length) {
+      db.all(
+        "INSERT INTO custompoke (userId, name, weight, mainAbility, secondAbility, private) VALUES (?,?,?,?,?,?)",
+        [
+          demoPokemon.userId,
+          demoPokemon.name,
+          demoPokemon.weight,
+          demoPokemon.mainAbility,
+          demoPokemon.secondAbility,
+          demoPokemon.private,
+        ]
+      );
+      console.log("Custom Pokemon created!");
+    }
+  });
+}
+
+OpenDB();
+CreateUsersTable().then(() => CreateAdminUser());
 CreateFavouritesTable();
+CreateCustomPokeTable().then(() => CreateDemoCustomPokemon());
 
 module.exports = db;
